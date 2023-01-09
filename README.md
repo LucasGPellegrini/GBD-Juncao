@@ -4,6 +4,7 @@
 
 
 Implementações consideram duas tabelas distintas, sendo elas:
+
 	- TABELA 1: ALUNO
 		. SEQ_ALUNO INT(4)  
 		. CODIGO_CURSO CHAR(3) 
