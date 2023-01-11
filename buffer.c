@@ -11,10 +11,10 @@ int CREATE_BUFFER(buffer_size_t bsize, buffer_t* buffer_ptr){
     buffer_ptr->bsize = bsize;
 
     page_t empty;
-    empty.ptype = VAZIO;
+    EMPTY_PAGE(&empty);
 
     for(buffer_size_t i = 0; i < bsize; i++){
-        buffer_ptr->bentry[i] = malloc(sizeof(buffer_entry_t));
+        buffer_ptr->bentry[i] = malloc(sizeof(page_t));
         if(buffer_ptr->bentry[i] == NULL){
             for(buffer_size_t j = 0; j < i; j++){
                 free(buffer_ptr->bentry[j]);
@@ -29,10 +29,11 @@ int CREATE_BUFFER(buffer_size_t bsize, buffer_t* buffer_ptr){
     return 1;
 }
 
-int ADD_PAGE_TO_BUFFER(buffer_t* buffer_ptr, buffer_size_t buffer_index, page_t* page){
-    if(buffer_ptr == NULL || buffer_index < 0 || buffer_index >= buffer_ptr->bsize || page == NULL || !VALID_PAGE_TYPE(page->ptype) || page->ptype || !IS_EMPTY_PAGE(&buffer_ptr->bentry[buffer_index])) return 0;
+// Warning: it does overwrite buffers page
+int ADD_PAGE_TO_BUFFER(buffer_t* buffer_ptr, buffer_size_t buffer_index, page_type_t page_type, FILE* fp, long int offset){
+    if(buffer_ptr == NULL || buffer_index < 0 || buffer_index >= buffer_ptr->bsize || page == NULL || !VALID_PAGE_TYPE(page->ptype) || fp == NULL || offset < 0) return 0;
 
-    return COPY_TO_PAGE(&buffer_ptr->bentry[buffer_index], *page); 
+    return COPY_TO_PAGE(&buffer_ptr->bentry[buffer_index], page_type, fp, offset); 
 }
 
 int DELETE_PAGE_FROM_BUFFER(buffer_t* buffer_ptr, buffer_size_t buffer_index){
