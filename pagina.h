@@ -2,22 +2,31 @@
 #define PAGINA_H_INCLUDED
 
 #include "registro.h"
-#include "size.h"
 
-#define PAG_SIZE 4*K
+typedef entry_number_t page_size_t;
 
-typedef struct aluno{
-    aluno[PAG_SIZE / sizeof(struct aluno)]
-} pagina_aluno_t;
+const page_size_t PAG_SIZE = 4*K;
 
-typedef struct curso{
-    curso[PAG_SIZE / sizeof(struct curso)]
-} pagina_curso_t;
+typedef union page_value_t{
+    page_aluno_t* alunos;
+    page_curso_t* cursos;
+} page_value_t;
 
-typedef char pagina_type_t;
+typedef struct page_t{
+    page_value_t pvalues;
+    page_type_t ptype;
+    page_size_t psize;
+} page_t;
 
-enum PAG_TYPE{VAZIO = 'v', ALUNO = 'a', CURSO = 'c'};
+typedef entry_type_t page_type_t;
 
-int VALID_PAG_TYPE(pagina_type_t pag_type);
+enum PAGE_TYPE{EMPTY = 'e', ALUNO = 'a', CURSO = 'c'};
+
+int VALID_PAGE_TYPE(page_type_t page_type);
+int CREATE_PAGE(page_t* page, page_type_t page_type);
+int COPY_TO_PAGE(page_t* page_to_copy_to, page_type_t page_type, FILE* fp, long int offset);
+int EMPTY_PAGE(page_t* page_to_empty);
+int IS_EMPTY_PAGE(page_t* page);
+int PRINT_PAGE(page_t* page);
 
 #endif
