@@ -1,6 +1,6 @@
 # GBD-Juncao
 
-# IMPLEMENTAÇÃO DO ALGORITMO DE JUNNÇÃO BASEADA EM XXXXXXXXX
+# IMPLEMENTAÇÃO DO ALGORITMO DE JUNNÇÃO BASEADA EM BLOCOS
 
 
 Implementações consideram duas tabelas distintas, sendo elas:
