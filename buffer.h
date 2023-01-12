@@ -13,6 +13,7 @@ typedef struct buffer_t{
 
 int CREATE_BUFFER(buffer_size_t bsize, buffer_t* buffer_ptr);
 int ADD_PAGE_TO_BUFFER(buffer_t* buffer_ptr, buffer_size_t buffer_index, page_type_t page_type, FILE* fp, long int offset);
+int ADD_FILE_TO_BUFFER(buffer_t* buffer_ptr, page_type_t page_type, FILE* fp);
 int DELETE_PAGE_FROM_BUFFER(buffer_t* buffer_ptr, buffer_size_t buffer_index);
 int DELETE_BUFFER(buffer_t* buffer_ptr);
 

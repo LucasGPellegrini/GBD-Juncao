@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "buffer.h"
+#include "page.h"
 
 int CREATE_BUFFER(buffer_size_t bsize, buffer_t* buffer_ptr){
     if(buffer_ptr == NULL || bsize <= 0) return 0;
@@ -34,6 +35,22 @@ int ADD_PAGE_TO_BUFFER(buffer_t* buffer_ptr, buffer_size_t buffer_index, page_ty
     if(buffer_ptr == NULL || buffer_index < 0 || buffer_index >= buffer_ptr->bsize || page == NULL || !VALID_PAGE_TYPE(page->ptype) || fp == NULL || offset < 0) return 0;
 
     return COPY_TO_PAGE(&buffer_ptr->bentry[buffer_index], page_type, fp, offset); 
+}
+
+int ADD_FILE_TO_BUFFER(buffer_t* buffer_ptr, page_type_t page_type, FILE* fp){
+    if(buffer_ptr == NULL || !VALID_PAGE_TYPE(page_type) || fp == NULL) return 0;
+
+    page_value_t pval;
+
+    PAGES_PER_FILE(fp, page_type, &pval);
+
+    if(pval > buffer_ptr->bsize) return 0;
+
+    for(page_value_t i = 0; i < pval; p++){
+        if(!ADD_PAGE_TO_BUFFER(buffer_ptr, i, page_type, fp, PAGE_SIZE * i)) return 0;
+    }
+
+    return 1;
 }
 
 int DELETE_PAGE_FROM_BUFFER(buffer_t* buffer_ptr, buffer_size_t buffer_index){

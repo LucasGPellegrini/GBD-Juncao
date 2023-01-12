@@ -3,22 +3,24 @@
 
 #include "registro.h"
 
-typedef entry_number_t page_size_t;
+typedef memory_size_t page_size_t;
 
-const page_size_t PAG_SIZE = 4*K;
+const page_size_t PAGE_SIZE = 4*K;
 
-typedef union page_value_t{
+typedef union page_entry_t{
     page_aluno_t* alunos;
     page_curso_t* cursos;
-} page_value_t;
+} page_entry_t;
 
 typedef struct page_t{
-    page_value_t pvalues;
+    page_entry_t pvalues;
     page_type_t ptype;
     page_size_t psize;
 } page_t;
 
 typedef entry_type_t page_type_t;
+
+typedef unsigned int page_value_t;
 
 enum PAGE_TYPE{EMPTY = 'e', ALUNO = 'a', CURSO = 'c'};
 

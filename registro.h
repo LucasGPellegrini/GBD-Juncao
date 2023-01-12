@@ -32,6 +32,8 @@ typedef struct curso* curso_t;
 typedef char entry_type_t;
 enum ENTRY_TYPE{ALUNO = 'a', CURSO = 'c'};
 
+typedef unsigned int entry_value_t;
+
 int VALID_ENTRY_TYPE(entry_type_t entry_type);
 int PRINT_ENTRY(void* entry, entry_type_t entry_type);
 
