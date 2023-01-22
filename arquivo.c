@@ -38,7 +38,7 @@ int PAGES_PER_FILE(FILE* fp, entry_type_t etype, page_value_t* pval){
     entry_value_t eval;
     ENTRIES_PER_FILE(fp, etype, &eval);
 
-    *pval = eval / PAGE_SIZE;
+    *pval = eval % PAGE_SIZE == 0 ? eval / PAGE_SIZE : eval / PAGE_SIZE + 1;
 
     return 1;
 }

@@ -35,6 +35,22 @@ int CREATE_PAGE(page_t* page, page_type_t page_type){
     return 1;
 }
 
+int PAGE_SIZE(page_type_t page_type, size_t* page_size){
+    if(!VALID_PAGE_TYPE(page_type) || page_size == NULL) return 0;
+
+    switch(page_type){
+        case ALUNO:
+            *page_size = sizeof(struct aluno);
+            break;
+
+        case CURSO:
+            *page_size = sizeof(struct curso);
+            break;
+    }
+
+    return 1;
+}
+
 int COPY_TO_PAGE(page_t* page_to_copy_to, page_type_t page_type, FILE* fp, long int offset){
     if(page_to_copy_to == NULL || !VALID_PAGE_TYPE(page_type) || fp == NULL || offset < 0) return 0;
 

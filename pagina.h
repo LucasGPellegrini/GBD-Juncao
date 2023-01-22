@@ -19,13 +19,14 @@ typedef struct page_t{
 } page_t;
 
 typedef entry_type_t page_type_t;
-
+typedef char page_usage_t;
 typedef unsigned int page_value_t;
 
 enum PAGE_TYPE{EMPTY = 'e', ALUNO = 'a', CURSO = 'c'};
 
 int VALID_PAGE_TYPE(page_type_t page_type);
 int CREATE_PAGE(page_t* page, page_type_t page_type);
+int PAGE_SIZE(page_type_t page_type, size_t* page_size);
 int COPY_TO_PAGE(page_t* page_to_copy_to, page_type_t page_type, FILE* fp, long int offset);
 int EMPTY_PAGE(page_t* page_to_empty);
 int IS_EMPTY_PAGE(page_t* page);
