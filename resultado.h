@@ -2,6 +2,7 @@
 #define RESULTADO_H_INCLUDED
 
 #include "registro.h"
+#include "pagina.h"
 
 typedef struct join_t{
     void* rentry;
@@ -17,7 +18,7 @@ typedef struct node_t{
 
 typedef node_t* list_t;
 
-int CREATE_ELEM(void* rentry, entry_type_t rtype, void* sentry, entry_type_t stype, join_t* elem);
+int CREATE_ELEM(page_entry_t* rpage, page_value_t rentry, entry_type_t rtype, page_entry_t* spage, page_value_t sentry, entry_type_t stype, join_t** elem);
 int DELETE_ELEM(join_t* elem);
 list_t CREATE_LIST(void);
 int EMPTY_LIST(list_t lst);

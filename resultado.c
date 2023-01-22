@@ -1,9 +1,10 @@
 #include <stdlib.h>
+#include <string.h>
 #include "resultado.h"
 #include "registro.h"
 
-int CREATE_ELEM(void* rentry, entry_type_t rtype, void* sentry, entry_type_t stype, joint_t** elem){
-    if(rentry == NULL || !VALID_ENTRY_TYPE(rtype) || sentry == NULL || !VALID_ENTRY_TYPE(stype) || elem == NULL)
+int CREATE_ELEM(page_entry_t* rpage, page_value_t rentry, entry_type_t rtype, page_entry_t* spage, page_value_t sentry, entry_type_t stype, join_t** elem){
+    if(rpage == NULL || rentry < 0 || !VALID_ENTRY_TYPE(rtype) || sentry < 0 || !VALID_ENTRY_TYPE(stype) || elem == NULL || *elem == NULL)
         return 0;
 
     *elem = malloc(sizeof(join_t));
@@ -15,31 +16,31 @@ int CREATE_ELEM(void* rentry, entry_type_t rtype, void* sentry, entry_type_t sty
     join_ptr->stype = stype;
 
     switch(rtype){
-        case ALUNO:
-            join_ptr->rentry = malloc(sizeof(struct aluno));
+        case ALUNO_PAGE:
+            join_ptr->rentry = malloc(sizeof(aluno_t));
             if(join_ptr->rentry == NULL){
                 free(join_ptr);
                 return 0;
             }
 
-            memcpy(join_ptr->rentry, rentry, sizeof(struct aluno));
+            memcpy(join_ptr->rentry, &rpage->alunos[rentry], sizeof(aluno_t));
             break;
 
-        case CURSO:
-            join_ptr->rentry = malloc(sizeof(struct curso));
+        case CURSO_PAGE:
+            join_ptr->rentry = malloc(sizeof(curso_t));
             if(join_ptr->rentry == NULL){
                 free(join_ptr->rentry);
                 free(join_ptr);
                 return 0;
             }
 
-            memcpy(join_ptr->rentry, rentry, sizeof(struct curso));
+            memcpy(join_ptr->rentry, &rpage->cursos[rentry], sizeof(curso_t));
             break;
     }
 
     switch(stype){
-        case ALUNO:
-            join_ptr->sentry = malloc(sizeof(struct aluno));
+        case ALUNO_PAGE:
+            join_ptr->sentry = malloc(sizeof(aluno_t));
             if(join_ptr->sentry == NULL){
                 free(join_ptr->rentry);
                 free(join_ptr->sentry);
@@ -47,11 +48,11 @@ int CREATE_ELEM(void* rentry, entry_type_t rtype, void* sentry, entry_type_t sty
                 return 0;
             }
 
-            memcpy(join_ptr->sentry, sentry, sizeof(struct aluno));
+            memcpy(join_ptr->sentry, &spage->alunos[sentry], sizeof(aluno_t));
             break;
 
-        case CURSO:
-            join_ptr->sentry = malloc(sizeof(struct curso));
+        case CURSO_PAGE:
+            join_ptr->sentry = malloc(sizeof(curso_t));
             if(join_ptr->rentry == NULL){
                 free(join_ptr->rentry);
                 free(join_ptr->sentry);
@@ -59,7 +60,7 @@ int CREATE_ELEM(void* rentry, entry_type_t rtype, void* sentry, entry_type_t sty
                 return 0;
             }
 
-            memcpy(join_ptr->sentry, sentry, sizeof(struct curso));
+            memcpy(join_ptr->sentry, &spage->cursos[sentry], sizeof(curso_t));
             break;
     }
 
@@ -69,8 +70,8 @@ int CREATE_ELEM(void* rentry, entry_type_t rtype, void* sentry, entry_type_t sty
 int DELETE_ELEM(join_t* elem){
     if(elem == NULL) return 0;
 
-    free((*elem)->rentry);
-    free((*elem)->sentry);
+    free(elem->rentry);
+    free(elem->sentry);
     free(elem);
 
     return 1;
@@ -94,56 +95,55 @@ int INSERT_AT_END(list_t* lst, join_t* elem){
 
    node->info = elem;
 
-   if(EMPTY_LIST(*lst)){
-      node->next = node;
-      *lst = node;
-   }else{
-      node->next = (*lst)->next;
-      (*lst)->next = node;
-      *lst = node;
-   }
-   return 1;
+    if(EMPTY_LIST(*lst)){
+        node->next = node;
+        *lst = node;
+    }else{
+        node->next = (*lst)->next;
+        (*lst)->next = node;
+        *lst = node;
+    }
+    return 1;
 }
 
 int EMPTY_THE_LIST(list_t* lst){
     if(lst == NULL)
-      return 0;
+        return 0;
 
     if(EMPTY_LIST(*lst))
-      return 1;
+        return 1;
 
     list_t aux = (*lst)->next;
     list_t aux2;
 
-   while(aux != *lst){
-      aux2 = aux->next;
-      free(aux->rentry);
-      free(aux->sentry);
-      free(aux);
-      aux = aux->next;
-   }
-   free(aux);
-   *lst = NULL;
+    while(aux != *lst){
+        aux2 = aux->next;
+        DELETE_ELEM(aux->info);
+        free(aux);
+        aux = aux->next;
+    }
+    free(aux);
+    *lst = NULL;
 
-   return 1;
+    return 1;
 }
 
 int DELETE_LIST(list_t* lst){
-   return(EMPTY_THE_LIST(lst));
+    return(EMPTY_THE_LIST(lst));
 }
 
 int SIZE(list_t lst){
-   if(EMPTY_LIST(lst))
-      return 0;
+    if(EMPTY_LIST(lst))
+        return 0;
 
-   int size = 1;
-   list_t aux = lst->next;
-   while(aux != lst){
-      aux = aux->next;
-      size++;
-   }
+    int size = 1;
+    list_t aux = lst->next;
+    while(aux != lst){
+        aux = aux->next;
+        size++;
+    }
 
-   return size;
+    return size;
 }
 
 
@@ -155,9 +155,9 @@ void PRINT_LIST(list_t lst){
 
         while(lst != head){
             printf("<\n");
-            PRINT_ENTRY(lst->info, lst->rtype);
+            PRINT_ENTRY(&lst->info->rentry, lst->info->rtype);
             printf(",\n");
-            PRINT_ENTRY(lst->info, lst->stype);
+            PRINT_ENTRY(&lst->info->rentry, lst->info->stype);
             printf(">.");
         }
     }

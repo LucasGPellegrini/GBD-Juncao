@@ -16,11 +16,11 @@ typedef struct buffer_slot_t{
 
 typedef struct buffer_t{
     buffer_size_t bsize;
-    buffer_slot_t* bslots[bsize];
+    buffer_slot_t** bslots;
 } buffer_t;
 
 int CREATE_BUFFER(buffer_size_t bsize, buffer_t* buffer_ptr);
-int FIND_FIRST_UNUSED_SLOT(buffer_t* buffer_ptr, buffer_slot_t* first_slot_ptr, buffer_size_t* first_slot_index);
+int FIND_FIRST_UNUSED_SLOT(buffer_t* buffer_ptr, buffer_slot_t** first_slot_ptr, buffer_size_t* first_slot_index);
 int ADD_PAGE_TO_BUFFER(buffer_t* buffer_ptr, buffer_size_t buffer_index, page_type_t page_type, FILE* fp, long int offset);
 int ADD_BLOCK_TO_BUFFER(buffer_t* buffer_ptr, page_type_t page_type, FILE* fp, page_value_t first_page_of_block, page_value_t last_page_of_block);
 int ADD_FILE_TO_BUFFER(buffer_t* buffer_ptr, page_type_t page_type, FILE* fp);
